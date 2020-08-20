@@ -1,0 +1,63 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: Anthos Self Service / GKE Cluster
+upstream:
+  type: git
+  git:
+    commit: 0fdbc68708553fd81276754d2b6eef25a9f34c91
+    repo: git@github.com:phanimarupaka/anthos-environ-samples
+    directory: /gke-cluster-1
+    ref: master
+openAPI:
+  definitions:
+    io.k8s.cli.setters.gcloud.container.cluster.location:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: gcloud.container.cluster.location
+          value: us-central1-c
+    io.k8s.cli.setters.gcloud.container.cluster.name:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: gcloud.container.cluster.name
+          value: gke-cluster-1
+    io.k8s.cli.setters.gcloud.container.nodepool.name:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: gcloud.container.nodepool.name
+          value: gke-nodepool-1
+    io.k8s.cli.setters.gcloud.core.project:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: gcloud.core.project
+          value: phani-project1
+          isSet: true
+    io.k8s.cli.setters.gcloud.project.projectNumber:
+      type: string
+      x-k8s-cli:
+        setter:
+          name: gcloud.project.projectNumber
+          value: "187964743169"
+          isSet: true
+    io.k8s.cli.substitutions.identity-namespace:
+      type: string
+      x-k8s-cli:
+        substitution:
+          name: identity-namespace
+          pattern: PROJECT_ID.svc.id.goog
+          values:
+          - marker: PROJECT_ID
+            ref: '#/definitions/io.k8s.cli.setters.gcloud.core.project'
+    io.k8s.cli.substitutions.mesh-id:
+      type: string
+      x-k8s-cli:
+        substitution:
+          name: mesh-id
+          pattern: proj-PROJECT_NUMBER
+          values:
+          - marker: PROJECT_NUMBER
+            ref: '#/definitions/io.k8s.cli.setters.gcloud.project.projectNumber'
